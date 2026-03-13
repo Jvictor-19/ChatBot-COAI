@@ -1,4 +1,4 @@
-# 🤖 ChatBot COAI/DAIN - UFS
+# ChatBot COAI/DAIN - UFS
 
 ![NodeJS](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
@@ -10,7 +10,7 @@ O sistema atua como o primeiro nível de atendimento (Tier 1) via WhatsApp, cent
 
 ---
 
-## 🚀 Arquitetura e Padrões de Projeto (Versão 1.0)
+##  Arquitetura e Padrões de Projeto (Versão 1.0)
 
 O projeto foi construído sobre o runtime Node.js, utilizando uma arquitetura orientada a eventos e fortemente inspirada no padrão **MVC (Model-View-Controller)** para garantir escalabilidade:
 
@@ -22,7 +22,7 @@ O projeto foi construído sobre o runtime Node.js, utilizando uma arquitetura or
 
 ---
 
-## 🛠️ Tecnologias e Dependências
+## Tecnologias e Dependências
 
 * **Node.js (v21+):** Ambiente de execução base.
 * **[whatsapp-web.js](https://wwebjs.dev/):** *Wrapper* extraoficial da API do WhatsApp.
@@ -31,7 +31,7 @@ O projeto foi construído sobre o runtime Node.js, utilizando uma arquitetura or
 
 ---
 
-## 🗺️ Roadmap (Trabalhos Futuros)
+## Roadmap (Trabalhos Futuros)
 
 A aplicação está em evolução contínua. As próximas *features* (Versão 2.0) incluem:
 
@@ -42,13 +42,15 @@ A aplicação está em evolução contínua. As próximas *features* (Versão 2.
 
 ---
 
-## ⚙️ Como Instalar e Rodar Localmente
+## Como Instalar e Rodar Localmente
 
 1. **Clone o repositório:**
    ```bash
    git clone [https://github.com/Jvictor-19/ChatBot-COAI.git](https://github.com/Jvictor-19/ChatBot-COAI.git)
 
-👨‍💻 Autor
+---
+
+## Autor
 
 João Victor Pereira Santos
 Estudante de Engenharia de Computação - Universidade Federal de Sergipe (UFS)
