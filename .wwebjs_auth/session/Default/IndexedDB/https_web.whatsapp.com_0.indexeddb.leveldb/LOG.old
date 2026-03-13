@@ -1,0 +1,13 @@
+2026/03/13-10:03:51.938 2a94 Reusing MANIFEST C:\Users\joao1\OneDrive\Documentos\ChatBot DAIN\CHATBOT COAI\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/03/13-10:03:51.938 2a94 Recovering log #13
+2026/03/13-10:03:51.953 2a94 Reusing old log C:\Users\joao1\OneDrive\Documentos\ChatBot DAIN\CHATBOT COAI\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000013.log 
+2026/03/13-10:15:55.400 2a94 Level-0 table #18: started
+2026/03/13-10:15:55.433 2a94 Level-0 table #18: 1190419 bytes OK
+2026/03/13-10:15:55.437 2a94 Delete type=0 #13
+2026/03/13-10:18:53.316 2a94 Compacting 1@1 + 1@2 files
+2026/03/13-10:18:53.370 2a94 Generated table #19@1: 62556 keys, 2224615 bytes
+2026/03/13-10:18:53.376 2a94 Generated table #20@1: 3757 keys, 134905 bytes
+2026/03/13-10:18:53.377 2a94 Compacted 1@1 + 1@2 files => 2359520 bytes
+2026/03/13-10:18:53.377 2a94 compacted to: files[ 0 0 2 0 0 0 0 ]
+2026/03/13-10:18:53.378 2a94 Delete type=2 #15
+2026/03/13-10:18:53.378 2a94 Delete type=2 #18
