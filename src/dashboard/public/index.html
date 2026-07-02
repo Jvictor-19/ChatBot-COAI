@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>COAI | Plataforma de Atendimento</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div id="toast-container" class="toast-container"></div>
+
+    <div id="login-screen" class="login-overlay">
+      <div class="login-card">
+        <div class="login-header">
+          <img
+            src="assets/logoClara.png"
+            alt="Logo COAI"
+            style="width: 300px; height: auto; margin-bottom: 10px"
+          />
+          <h2>COAI Assistant</h2>
+          <p>Faça login para acessar a telemetria</p>
+        </div>
+        <form id="login-form">
+          <div class="input-group">
+            <label>E-mail Institucional</label>
+            <input type="email" id="email" value="coai@ufs.br" required />
+          </div>
+          <div class="input-group">
+            <label>Senha</label>
+            <input type="password" id="password" required />
+          </div>
+          <p id="login-error" class="error-msg"></p>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            style="width: 100%; justify-content: center; margin-top: 10px"
+          >
+            Entrar no Sistema
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div id="app-layout" class="app-layout" style="display: none">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <img
+            src="assets/logoClara.png"
+            alt="Logo COAI"
+            class="brand-icon"
+            style="width: 200px; height: auto; border-radius: 4px"
+          />
+        </div>
+        <nav class="sidebar-nav">
+          <a href="#" class="nav-item active" data-target="view-dashboard"
+            ><i class="fa-solid fa-chart-pie"></i> Visão Geral</a
+          >
+          <a href="#" class="nav-item" data-target="view-fila" id="nav-fila">
+            <i class="fa-solid fa-users"></i> Atendimento Humano
+            <span id="badge-sidebar" class="badge" style="display: none"
+              >0</span
+            >
+          </a>
+          <a
+            href="#"
+            class="nav-item"
+            data-target="view-cms"
+            onclick="carregarCMS()"
+            ><i class="fa-solid fa-pen-to-square"></i> Textos do Bot</a
+          >
+
+          <a href="#" class="nav-item" data-target="view-connection"
+            ><i class="fa-solid fa-microchip"></i> Motor WhatsApp</a
+          >
+          <a href="#" class="nav-item" data-target="view-history"
+            ><i class="fa-solid fa-list-check"></i> Auditoria</a
+          >
+        </nav>
+        <div style="margin-top: auto; padding: 20px">
+          <button
+            onclick="fazerLogout()"
+            class="btn btn-outline"
+            style="width: 100%; justify-content: center"
+          >
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
+          </button>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <h1 class="page-title" id="header-title">Visão Geral</h1>
+            <p class="page-subtitle" id="header-subtitle">
+              Monitoramento em tempo real das métricas
+            </p>
+          </div>
+          <div class="topbar-actions">
+            <div
+              class="notification-bell"
+              onclick="document.getElementById('nav-fila').click()"
+              title="Ver fila de atendimento"
+            >
+              <i class="fa-solid fa-bell"></i>
+              <span
+                id="badge-topbar"
+                class="badge pulse-anim"
+                style="display: none"
+                >0</span
+              >
+            </div>
+
+            <div class="status-pill" id="status-badge">
+              <div class="indicator" id="status-led"></div>
+              <span id="status-text">Aguardando motor...</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="content-wrapper">
+          <section id="view-cms" class="view-section">
+            <div class="card">
+              <div class="card-header">
+                <h2>Editor de Textos Dinâmicos</h2>
+                <p
+                  style="
+                    font-size: 0.85rem;
+                    color: var(--text-muted);
+                    margin-top: 5px;
+                  "
+                >
+                  Altere os textos, links e respostas do robô em tempo real.
+                </p>
+              </div>
+              <div style="padding: 25px" id="cms-container">
+                <p class="text-center hint-text">Carregando editor...</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="view-dashboard" class="view-section active">
+            <div class="kpi-row">
+              <div class="card kpi-card">
+                <div class="kpi-data">
+                  <span class="kpi-label">Sessões Globais</span
+                  ><strong class="kpi-value" id="kpi-total">0</strong>
+                </div>
+                <div class="kpi-icon blue-bg">
+                  <i class="fa-solid fa-comments"></i>
+                </div>
+              </div>
+              <div class="card kpi-card">
+                <div class="kpi-data">
+                  <span class="kpi-label">Usuários Atendidos</span
+                  ><strong class="kpi-value" id="kpi-users">0</strong>
+                </div>
+                <div class="kpi-icon green-bg">
+                  <i class="fa-solid fa-user-check"></i>
+                </div>
+              </div>
+            </div>
+            <div class="card chart-card" style="margin-top: 25px">
+              <div class="card-header"><h2>Mapa de Calor de Demandas</h2></div>
+              <div class="canvas-box"><canvas id="menuChart"></canvas></div>
+            </div>
+          </section>
+
+          <section id="view-fila" class="view-section">
+            <div class="info-alert mb-20" id="fila-alert">
+              <i class="fa-solid fa-circle-info"></i> Não há alunos aguardando
+              atendimento no momento.
+            </div>
+            <div class="card">
+              <div class="table-container">
+                <table class="modern-table">
+                  <thead>
+                    <tr>
+                      <th>USUÁRIO</th>
+                      <th>CONTATO</th>
+                      <th>AGUARDANDO HÁ</th>
+                      <th>STATUS</th>
+                      <th>AÇÃO</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabela-fila">
+                    <tr>
+                      <td colspan="5" class="text-center hint-text">
+                        Ninguém na fila.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section id="view-connection" class="view-section">
+            <div class="split-row">
+              <div class="card connection-card">
+                <div class="card-header"><h2>Autenticação</h2></div>
+                <div class="qr-container">
+                  <img
+                    id="qr-image"
+                    src=""
+                    alt="QR Code"
+                    style="display: none"
+                  />
+                  <div id="qr-placeholder" class="placeholder-box">
+                    <i class="fa-solid fa-qrcode"></i><span>Aguardando...</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header"><h2>Controle de Tráfego</h2></div>
+                <div
+                  style="
+                    padding: 20px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 15px;
+                  "
+                >
+                  <button
+                    id="btn-toggle-bot"
+                    onclick="alternarBot()"
+                    class="btn btn-primary"
+                    style="justify-content: center; padding: 15px"
+                  >
+                    <i class="fa-solid fa-pause"></i> Pausar Automação
+                  </button>
+                  <a
+                    href="https://web.whatsapp.com/"
+                    target="_blank"
+                    class="btn btn-outline"
+                    style="
+                      justify-content: center;
+                      padding: 15px;
+                      color: var(--success);
+                      border-color: var(--success);
+                      text-decoration: none;
+                    "
+                    ><i class="fa-brands fa-whatsapp"></i> WhatsApp Web</a
+                  >
+                  <button
+                    onclick="desconectarBot()"
+                    class="btn btn-outline"
+                    style="
+                      justify-content: center;
+                      padding: 15px;
+                      color: var(--danger);
+                      border-color: var(--danger);
+                    "
+                  >
+                    <i class="fa-solid fa-power-off"></i> Ejetar Sessão
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="view-history" class="view-section">
+            <div class="card">
+              <div
+                class="card-header"
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  flex-wrap: wrap;
+                  gap: 15px;
+                "
+              >
+                <h2>Auditoria</h2>
+                <div style="display: flex; gap: 10px; align-items: center">
+                  <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i
+                    ><input
+                      type="text"
+                      id="input-pesquisa"
+                      placeholder="Buscar aluno ou número..."
+                      onkeyup="filtrarTabela()"
+                    />
+                  </div>
+                  <button
+                    onclick="exportarCSV()"
+                    class="btn-text"
+                    style="color: var(--success); font-size: 1.2rem"
+                    title="Exportar CSV"
+                  >
+                    <i class="fa-solid fa-file-csv"></i>
+                  </button>
+                  <button
+                    onclick="carregarDados()"
+                    class="btn-text"
+                    title="Sincronizar"
+                    style="font-size: 1.2rem"
+                  >
+                    <i class="fa-solid fa-rotate-right"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="table-container">
+                <table class="modern-table">
+                  <thead>
+                    <tr>
+                      <th>DATA / HORA</th>
+                      <th>ALUNO</th>
+                      <th>NÚMERO</th>
+                      <th>STATUS</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabela-atendimentos">
+                    <tr>
+                      <td colspan="4" class="text-center hint-text">
+                        Carregando...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

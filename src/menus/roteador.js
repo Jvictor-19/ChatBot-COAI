@@ -7,6 +7,7 @@ const roteador = async (client, msg, estadoAtual) => {
   try {
     switch (estadoAtual) {
       case "INICIO":
+      case "COLETA_NOME":
       case "MENU_PRINCIPAL":
         await inicio(client, msg, estadoAtual);
         break;
