@@ -1,20 +1,12 @@
-# Dependências do Node.js
+# Dependências do Node
 node_modules/
-npm-debug.log*
 
-# Sessão e Cache do WhatsApp (CRÍTICO - SEGURANÇA)
-.wwebjs_auth/
-.wwebjs_cache/
-
-# Banco de Dados SQLite (Impede vazamento de dados dos usuários)
-*.db
-*.sqlite
-*.sqlite3
-
-# Variáveis de Ambiente e Logs
+# Chaves e Arquivos Secretos
+credenciais.json
 .env
-*.log
 
-# Arquivos de Sistema Operacional
-.DS_Store
-Thumbs.db
+# Banco de Dados Local
+banco_coai.db
+
+# Sessões do WhatsApp
+.wwebjs_auth/

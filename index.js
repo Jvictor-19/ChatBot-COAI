@@ -1,24 +1,38 @@
-const qrcode = require("qrcode-terminal");
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const { userSessions, resetarCronometro } = require("./src/session");
 const roteador = require("./src/menus/roteador");
+const { iniciarBanco } = require("./src/database"); // Importação do Banco de Dados
+const { iniciarDashboard } = require("./src/dashboard/server"); // Importação do Dashboard Web
 
 const client = new Client({
-  authStrategy: new LocalAuth(),
+  authStrategy: new LocalAuth(), // Mantém a sua estratégia de cache atual
   puppeteer: {
     headless: true,
-    args: ["--no-sandbox", "--disable-gpu", "--single-process"],
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-accelerated-2d-canvas",
+      "--no-first-run",
+      "--no-zygote",
+      "--disable-gpu",
+    ],
   },
 });
 
+// Garante que o estado inicial do robô seja ATIVO
+client.botAtivo = true;
+
 client.on("qr", (qr) => {
-  console.log("📲 Escaneie o QR Code abaixo:");
-  qrcode.generate(qr, { small: true });
+  console.log("📲 QR Code interceptado pelo backend. Enviando para o site...");
 });
 
 client.on("ready", () => console.log("✅ Motor do COAI conectado!"));
 
 client.on("message", async (msg) => {
+  // 🛑 TRAVA DO PAINEL: Se o bot estiver inativo, ignora a mensagem imediatamente
+  if (client.botAtivo === false) return;
+
   if (
     !msg.from ||
     msg.from.endsWith("@g.us") ||
@@ -53,4 +67,38 @@ client.on("message", async (msg) => {
   await roteador(client, msg, estadoAtual);
 });
 
-client.initialize();
+// ==========================================
+// 🛡️ VACINA ANTI-TRAVAMENTO (Graceful Shutdown)
+// ==========================================
+const fecharServidor = async () => {
+  console.log("\n⚠️ Sinal de encerramento recebido (Ctrl+C).");
+  console.log(
+    "🛑 Fechando o Chrome invisível em background para não corromper a sessão...",
+  );
+  try {
+    await client.destroy();
+    console.log("✅ WhatsApp ejetado da memória com sucesso. Até logo!");
+    process.exit(0);
+  } catch (err) {
+    console.error("❌ Erro ao fechar o navegador:", err);
+    process.exit(1);
+  }
+};
+
+// Intercepta o Ctrl+C no terminal do Windows/Linux
+process.on("SIGINT", fecharServidor);
+process.on("SIGTERM", fecharServidor);
+
+// 🚀 Sequência de Ignição: Banco -> Dashboard Web -> WhatsApp
+iniciarBanco()
+  .then(() => {
+    console.log("🗄️ Banco de dados pronto. Subindo o servidor web...");
+    // LIGA A PORTA 3000 IMEDIATAMENTE ANTES DO WHATSAPP PESADO CARREGAR
+    iniciarDashboard(client);
+
+    console.log("🤖 Inicializando instâncias do WhatsApp...");
+    client.initialize();
+  })
+  .catch((erro) => {
+    console.error("❌ Erro crítico ao iniciar o banco de dados:", erro);
+  });
